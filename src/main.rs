@@ -67,11 +67,12 @@ fn main() {
 #[command]
 fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
   msg.channel_id.broadcast_typing(&ctx)?;
-
-  msg.reply(
-    &ctx,
-    "Pruning plebs...",
-  )?;
+  let total_members: u64 = msg.guild(&ctx)
+    .unwrap()
+    .read()
+    .member_count;
+  
+  println!("Total Members: {}", total_members);
 
   Ok(())
 }
