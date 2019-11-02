@@ -9,7 +9,10 @@ use serenity::{
   },
   model::{
     channel::Message,
-    guild::Member,
+    guild::{
+      Guild,
+      Member,
+    },
     id::{
       UserId,
       RoleId,
@@ -76,6 +79,7 @@ fn main() {
 #[command]
 fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
   let mut is_admin: bool = false;
+  let mut plebs: Vec<Member> = Vec::new();
   if msg.is_private() {
     msg.reply(
       &ctx,
@@ -113,6 +117,10 @@ fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
     });
     return Ok(())
   }
+  msg.reply(
+    &ctx,
+    "Prune started. This may take a bit!".to_string(),
+  )?;
   msg.channel_id.broadcast_typing(&ctx)?;
   // Get total members
   // We can only iterate through guild members in 1,000 member chunks
@@ -159,11 +167,17 @@ fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
         }
       }
       if is_pleb {
-        println!("PLEB LOCATED: {}", member.user_id().as_u64())
+        println!("PLEB LOCATED: {}", member.user_id().as_u64());
+        plebs.push(member.clone())
       }
       last_member_id = member.user_id()
     }
   };
+
+  msg.reply(
+    &ctx,
+    format!("I have detected **{}** plebs in this Discord.", plebs.len()),
+  )?;
   
   Ok(())
 }
