@@ -40,6 +40,8 @@ struct ConfigSchema {
 struct DiscordConfig {
   guild_id: u64,
   no_prune_ranks: Vec<u64>,
+  admin_roles: Vec<u64>,
+  admin_users: Vec<u64>,
   token: String,
   prune_msg: String,
 }
@@ -71,9 +73,46 @@ fn main() {
   }
 }
 
-
 #[command]
 fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
+  let mut is_admin: bool = false;
+  if msg.is_private() {
+    msg.reply(
+      &ctx,
+      "You cannot prune from Direct Messages!".to_string(),
+    )?;
+
+    return Ok(())
+  }
+  // Checks if the issuing user has one of the admin roles defined in the config
+  'role_check: for role in &CONFIG.discord.admin_roles {
+    if msg.member(&ctx)
+      .unwrap()
+      .roles
+      .contains(&RoleId(*role)) {
+        is_admin = true;
+
+        break 'role_check
+      }
+  }
+  // Don't perform this admin check if we know they are admin already
+  if !is_admin {
+    // Checks if the issuing user is one of the authorized users as defined in the config
+    'user_check: for user in &CONFIG.discord.admin_users {
+      if msg.author.id == UserId(*user) {
+        is_admin = true;
+
+        break 'user_check
+      }
+    }
+  }
+  // Stops execution if user is not an admin at this point
+  if !is_admin {
+    let _ = msg.author.direct_message(&ctx, |m| {
+      m.content("You aren't an admin. I'm telling!")
+    });
+    return Ok(())
+  }
   msg.channel_id.broadcast_typing(&ctx)?;
   // Get total members
   // We can only iterate through guild members in 1,000 member chunks
@@ -86,6 +125,7 @@ fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
   println!("Total Members: {}", total_members);
 
   'batch_handler: for x in 0..(round::ceil((total_members / 1000) as f64, 0) + 1.0) as u64 {
+    msg.channel_id.broadcast_typing(&ctx)?;
     println!("Retrieving member batch {}...", x);
     let batch_members: Vec<Member>;
 
