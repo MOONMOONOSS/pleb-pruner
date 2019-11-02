@@ -7,7 +7,14 @@ use serenity::{
     macros::{command, group},
     Args, CommandResult, StandardFramework,
   },
-  model::channel::Message,
+  model::{
+    channel::Message,
+    guild::Member,
+    id::{
+      UserId,
+      RoleId,
+    },
+  },
   prelude::{Context, EventHandler},
 };
 use std::fs::File;
@@ -74,11 +81,48 @@ fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
     .unwrap()
     .read()
     .member_count;
+  let mut last_member_id: UserId = UserId(0);
 
   println!("Total Members: {}", total_members);
 
-  for x in 0..(round::ceil((total_members / 1000) as f64, 0) + 1.0) as u64 {
+  'batch_handler: for x in 0..(round::ceil((total_members / 1000) as f64, 0) + 1.0) as u64 {
     println!("Retrieving member batch {}...", x);
+    let batch_members: Vec<Member>;
+
+    // Get member batch
+    match last_member_id.as_u64() {
+      // If first iteration
+      0 => {
+        batch_members = msg.guild(&ctx)
+          .unwrap()
+          .read()
+          .members(&ctx, Some(1000), None)
+          .unwrap();
+      },
+      // Subsequent iterations
+      _ => {
+        batch_members = msg.guild(&ctx)
+          .unwrap()
+          .read()
+          .members(&ctx, Some(1000), Some(last_member_id))
+          .unwrap();
+      },
+    };
+    
+    'member_handler: for member in &batch_members {
+      let mut is_pleb: bool = true;
+      // Checks user roles against a config-backed list of non-pleb roles
+      'role_handler: for role in &CONFIG.discord.no_prune_ranks {
+        if member.roles.contains(&RoleId(*role)) {
+          is_pleb = false;
+          break 'role_handler
+        }
+      }
+      if is_pleb {
+        println!("PLEB LOCATED: {}", member.user_id().as_u64())
+      }
+      last_member_id = member.user_id()
+    }
   };
   
   Ok(())
