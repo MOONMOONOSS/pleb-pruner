@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 hyper = "0.12"
 lazy_static = "1.4.0"
+libmath = "0.2.1"
 reqwest = "0.9"
 serenity = "0.7"
 serde = "1.0"

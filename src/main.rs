@@ -1,4 +1,5 @@
 use lazy_static::lazy_static;
+use math::round;
 use serde::{Deserialize, Serialize};
 use serenity::{
   client::Client,
@@ -67,12 +68,18 @@ fn main() {
 #[command]
 fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
   msg.channel_id.broadcast_typing(&ctx)?;
+  // Get total members
+  // We can only iterate through guild members in 1,000 member chunks
   let total_members: u64 = msg.guild(&ctx)
     .unwrap()
     .read()
     .member_count;
-  
+
   println!("Total Members: {}", total_members);
 
+  for x in 0..(round::ceil((total_members / 1000) as f64, 0) + 1.0) as u64 {
+    println!("Retrieving member batch {}...", x);
+  };
+  
   Ok(())
 }
