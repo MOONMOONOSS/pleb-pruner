@@ -1,0 +1,17 @@
+discord:
+  guild_id: 193277318494420992 # MOONMOON Official Discord
+  no_prune_ranks:
+    - 193880299392729088 # Subscriber Role
+    - 225074078149509131 # Moonlight Player
+    - 436319888076832778 # Game Master III
+    - 193277912236032001 # Moderator
+    - 194376397215629312 # Administrator
+    - 193278247646134272 # Moon's Rank
+    - 358854401311375362 # Streamer
+    - 244213147693481984 # Artists
+    - 436320362712662016 # Game Master
+    - 251479266875670528 # Goodwill Lost & Found
+    - 441310174385405963 # Community Organizer
+    - 195419638182576128 # BACK TO THE PIT
+  token: token
+  prune_msg: "You have been removed from the MOONMOON Discord.\nThe MOONMOON Discord is a subscriber only Discord.\nTo rejoin the community please resubscribe."
