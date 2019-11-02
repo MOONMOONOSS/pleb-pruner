@@ -9,10 +9,7 @@ use serenity::{
   },
   model::{
     channel::Message,
-    guild::{
-      Guild,
-      Member,
-    },
+    guild::Member,
     id::{
       GuildId,
       UserId,
@@ -207,6 +204,7 @@ fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
           let _ = usr.direct_message(&ctx, |m| {
             m.content(&CONFIG.discord.kick_msg)
           });
+          let _ = GuildId(CONFIG.discord.guild_id).kick(&ctx, member.user_id());
         }
       }
       last_member_id = member.user_id()

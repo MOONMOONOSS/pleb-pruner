@@ -1,17 +1,28 @@
 discord:
   guild_id: 193277318494420992 # MOONMOON Official Discord
   no_prune_ranks:
-    - 193880299392729088 # Subscriber Role
-    - 225074078149509131 # Moonlight Player
-    - 436319888076832778 # Game Master III
-    - 193277912236032001 # Moderator
-    - 194376397215629312 # Administrator
-    - 193278247646134272 # Moon's Rank
-    - 358854401311375362 # Streamer
-    - 244213147693481984 # Artists
-    - 436320362712662016 # Game Master
-    - 251479266875670528 # Goodwill Lost & Found
-    - 441310174385405963 # Community Organizer
-    - 195419638182576128 # BACK TO THE PIT
+    - 193880299392729088  # Subscriber Role
+    - 225074078149509131  # Moonlight Player
+    - 436319888076832778  # Game Master III
+    - 193277912236032001  # Moderator
+    - 194376397215629312  # Administrator
+    - 193278247646134272  # Moon's Rank
+    - 358854401311375362  # Streamer
+    - 244213147693481984  # Artists
+    - 436320362712662016  # Game Master
+    - 251479266875670528  # Goodwill Lost & Found
+    - 441310174385405963  # Community Organizer
+    - 195419638182576128  # BACK TO THE PIT
+    - 204686340648861696  # Discord Employees
+  admin_roles:
+    - 193277912236032001  # Moderator
+    - 194376397215629312  # Administrator
+    - 193278247646134272  # Moon's Rank
+    - 441310174385405963  # Community Organizer
+  admin_users:
+    - 82982763317166080   # Dunkel
+  kick_plebs: false       # Should we kick plebs when detected?
+  warn_plebs: false       # Should we warn plebs if they are in danger of being kicked?
   token: token
-  prune_msg: "You have been removed from the MOONMOON Discord.\nThe MOONMOON Discord is a subscriber only Discord.\nTo rejoin the community please resubscribe."
+  kick_msg: "I have detected that you are not currently subscribed to MOONMOON. You may be removed from the MOONMOON Discord in the future if you do not subscribe.\n**This is an automated message.**"
+  warn_msg: "I have detected that you are not currently subscribed to MOONMOON. Therefore, you have been removed from the sub only Discord. You may rejoin if when you choose to subscribe to MOONMOON on Twitch.\n**This is an automated message.**"
