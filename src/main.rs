@@ -17,6 +17,7 @@ use serenity::{
       UserId,
       RoleId,
     },
+    user::User,
   },
   prelude::{Context, EventHandler},
 };
@@ -45,8 +46,11 @@ struct DiscordConfig {
   no_prune_ranks: Vec<u64>,
   admin_roles: Vec<u64>,
   admin_users: Vec<u64>,
+  kick_plebs: bool,
+  warn_plebs: bool,
   token: String,
-  prune_msg: String,
+  kick_msg: String,
+  warn_msg: String,
 }
 
 lazy_static!{
@@ -168,7 +172,29 @@ fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
       }
       if is_pleb {
         println!("PLEB LOCATED: {}", member.user_id().as_u64());
-        plebs.push(member.clone())
+        plebs.push(member.clone());
+
+        // Executes if warn plebs is enabled in config
+        if CONFIG.discord.warn_plebs && !CONFIG.discord.kick_plebs {
+          let usr: User = member
+            .user_id()
+            .to_user(&ctx)
+            .unwrap();
+          let _ = usr.direct_message(&ctx, |m| {
+            m.content(&CONFIG.discord.warn_msg)
+          });
+        }
+        // Executes if kick plebs is enabled in config
+        if CONFIG.discord.kick_plebs {
+          let usr: User = member
+            .user_id()
+            .to_user(&ctx)
+            .unwrap();
+          // Send user a direct message explaining the kick
+          let _ = usr.direct_message(&ctx, |m| {
+            m.content(&CONFIG.discord.kick_msg)
+          });
+        }
       }
       last_member_id = member.user_id()
     }
