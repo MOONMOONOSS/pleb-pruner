@@ -132,11 +132,13 @@ fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
     });
     return Ok(())
   }
+
   msg.reply(
     &ctx,
     "Prune started. This may take a bit!".to_string(),
   )?;
   msg.channel_id.broadcast_typing(&ctx)?;
+  
   // Get total members
   // We can only iterate through guild members in 1,000 member chunks
   let total_members: u64 = msg.guild(&ctx)
@@ -147,7 +149,7 @@ fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
 
   println!("Total Members: {}", total_members);
 
-  'batch_handler: for x in 0..(round::ceil((total_members / 1000) as f64, 0) + 1.0) as u64 {
+  'batch_handler: for x in 0..=round::ceil((total_members / 1000) as f64, 0) as u64 {
     msg.channel_id.broadcast_typing(&ctx)?;
     println!("Retrieving member batch {}...", x);
     let batch_members: Vec<Member>;
