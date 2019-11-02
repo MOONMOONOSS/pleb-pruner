@@ -14,6 +14,7 @@ use serenity::{
       Member,
     },
     id::{
+      GuildId,
       UserId,
       RoleId,
     },
@@ -84,10 +85,20 @@ fn main() {
 fn prune(ctx: &mut Context, msg: &Message, _args: Args) -> CommandResult {
   let mut is_admin: bool = false;
   let mut plebs: Vec<Member> = Vec::new();
+  // Checks if the issuing user sent message in DMs
   if msg.is_private() {
     msg.reply(
       &ctx,
       "You cannot prune from Direct Messages!".to_string(),
+    )?;
+
+    return Ok(())
+  }
+  // Checks if the issuing user issued the command from the correct guild
+  if msg.guild_id.unwrap() != GuildId(CONFIG.discord.guild_id) {
+    msg.reply(
+      &ctx,
+      "You must prune from within the intended guild".to_string(),
     )?;
 
     return Ok(())
